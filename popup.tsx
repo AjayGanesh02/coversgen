@@ -1,24 +1,27 @@
-import { useState } from "react"
+import { sendToBackground } from "@plasmohq/messaging"
+import { useStorage } from "@plasmohq/storage/hook"
+
+import "./style.css"
+
+import React from "react"
 
 function IndexPopup() {
-  const [data, setData] = useState("")
+  const [resume, setResume] = useStorage("resume", (v) =>
+    v === undefined ? "" : v
+  )
 
   return (
-    <div
-      style={{
-        padding: 16
-      }}>
-      <h2>
-        Welcome to your{" "}
-        <a href="https://www.plasmo.com" target="_blank">
-          Plasmo
-        </a>{" "}
-        Extension!
-      </h2>
-      <input onChange={(e) => setData(e.target.value)} value={data} />
-      <a href="https://docs.plasmo.com" target="_blank">
-        View Docs
-      </a>
+    <div className="flex flex-col justify-center items-center h-96 w-96 p-16">
+      <textarea onChange={(e) => setResume(e.target.value)} value={resume} />
+      <div
+        className="border rounded-md h-20 w-20"
+        onClick={async () => {
+          const resp = await sendToBackground({
+            name: "ping"
+          })
+          console.log(resp.message)
+        }}
+      />
     </div>
   )
 }
